@@ -6,7 +6,7 @@ set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 
 # https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html
-set(MCU_FLAGS "-mcpu=cortex-m4 -mthumb")
+set(MCU_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 
 set(CMAKE_C_FLAGS_INIT ${MCU_FLAGS})
 set(CMAKE_CXX_FLAGS_INIT ${MCU_FLAGS})
