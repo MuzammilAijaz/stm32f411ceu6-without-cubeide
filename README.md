@@ -1,3 +1,19 @@
+# Modified setup for STM32F411CEU6
+
+Only get relevant modules.
+
+```shell
+git submodule update --init --depth 1 vendor/STM32CubeF4
+cd vendor/STM32CubeF4
+git submodule update --init --depth 1 Drivers/CMSIS/Device/ST/STM32F4xx/ Drivers/STM32F4xx_HAL_Driver/ Middlewares/ST/STM32_USB_Device_Library Middlewares/ST/STM32_USB_Host_Library Middlewares/Third_Party/FreeRTOS
+```
+
+or do:
+
+```shell
+make setup
+```
+
 # STM32 without CubeIDE
 
 Code for the blog post series "STM32 without CubeIDE" at https://kleinembedded.com
