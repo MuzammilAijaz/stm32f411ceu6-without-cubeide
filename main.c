@@ -25,21 +25,29 @@
 ///   +5V pins are directly coupled to the USB VBUS without protection diodes.
 ///   DO NOT power the board via USB and external 5V simultaneously.
 ///
+/// * Semihosting
+///   - openocd -f interface/stlink.cfg -f target/stm32f4x.cfg
+///   - arm-none-eabi-gdb -ex "target extended-remote localhost:3333" -ex "monitor arm semihosting enable" -ex "continue"
+///
+///   WARN: system is halted as printf causes breakpoint. So gdb is required to resume.
+///
 ///*****************************************************************************
 
 #include <stdint.h>
 #include <stdio.h>
 #include "main.h"
 
-UART_HandleTypeDef uart2;
-
 void clock_init();
+// Semihosting
+extern void initialise_monitor_handles(void);
 
 void main(void)
 {
   HAL_Init();
   clock_init();
   SystemCoreClockUpdate(); // Update the internal clock frequency variable
+  // Init for semihosting
+  initialise_monitor_handles();
 
   // Initialize LED GPIO
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -53,28 +61,13 @@ void main(void)
 
   HAL_GPIO_Init(LED_PORT, &gpio_init);
 
-  // Initialize UART
-  uart2.Instance = USART2;
-  uart2.Init.BaudRate = 9600;
-  uart2.Init.Mode = UART_MODE_TX;
-  uart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  uart2.Init.WordLength = UART_WORDLENGTH_8B;
-  uart2.Init.StopBits = UART_STOPBITS_1;
-  uart2.Init.Parity = UART_PARITY_NONE;
-  uart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&uart2) != HAL_OK)
-  {
-    while(1);
-  }
-
-  // Dummy write, because the first byte seems to always be dropped
-  USART2->DR = 0;
-  while (!(USART2->SR & USART_SR_TC));
-  
   while(1)
   {
     HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+
+    // causes breakpoint
     printf("[%.3f] Hello, World!\r\n", HAL_GetTick()/1000.0f);
+
     HAL_Delay(500);
   }
 }

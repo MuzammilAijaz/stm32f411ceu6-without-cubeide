@@ -162,6 +162,12 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
+
+    /* Add this right after the .bss section */
+    . = ALIGN(4);
+    _end = .;
+    PROVIDE(end = .);
+    __end__ = .;
   } >RAM
 
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */

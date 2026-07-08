@@ -8,7 +8,6 @@ add_compile_options(-g -O0) # Global compile flags
 
 set(BLINK_SOURCES
     main.c
-    core/syscalls.c
     core/startup_stm32f411xe.s
     core/system_stm32f4xx.c
     core/stm32f4xx_hal_msp.c
@@ -18,6 +17,10 @@ add_executable(blink ${BLINK_SOURCES})
 
 set_target_properties(blink PROPERTIES OUTPUT_NAME "blink.elf")
 
+# Track linker script changes inside CMake directly
+set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/core/STM32F411CEUx_FLASH.ld")
+set_target_properties(blink PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
+
 target_include_directories(blink PRIVATE 
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/core)
@@ -25,8 +28,16 @@ target_include_directories(blink PRIVATE
 target_compile_options(blink PRIVATE
     --specs=nano.specs)
 
+# for semihosting runtime; ARM's debug monitor semihosting implementation
+# WARN: remove syscalls.c
 target_link_options(blink PRIVATE
-    -T ${CMAKE_SOURCE_DIR}/core/STM32F411CEUx_FLASH.ld 
+    --specs=rdimon.specs
+    # -lc
+    # -lrdimon
+)
+
+target_link_options(blink PRIVATE
+    -T ${LINKER_SCRIPT}
     -u _printf_float)
 
 include(cmake/stm32cubef4.cmake)

@@ -1,3 +1,5 @@
+.PHONY: all build flash clean
+
 all: build
 
 setup:
@@ -27,3 +29,7 @@ build:
 
 flash:
 	cmake --build build --target flash
+
+clean:
+	rm -rf build
+

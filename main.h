@@ -6,6 +6,4 @@
 #define LED_PIN GPIO_PIN_13
 #define LED_PORT GPIOC
 
-extern UART_HandleTypeDef uart2;
-
 #endif
